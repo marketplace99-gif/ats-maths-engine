@@ -10,6 +10,47 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- INJECT NATIVE APP LOOK & FEEL ---
+st.markdown("""
+    <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            max-width: 800px;
+        }
+        div[data-testid="stSidebar"] {
+            background-color: #1E222B;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Initialize a persistent background log for storing calculations if it doesn't exist yet
+if "history_log" not in st.session_state:
+
+# --- INJECT NATIVE APP LOOK & FEEL ---
+st.markdown("""
+    <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            max-width: 800px;
+        }
+        div[data-testid="stSidebar"] {
+            background-color: #1E222B;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Initialize a persistent background log for storing calculations if it doesn't exist yet
+if "history_log" not in st.session_state:
+...
+
 # Initialize a persistent background log for storing calculations if it doesn't exist yet
 if "history_log" not in st.session_state:
     st.session_state.history_log = []
