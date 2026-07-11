@@ -29,30 +29,6 @@ st.markdown("""
 
 # Initialize a persistent background log for storing calculations if it doesn't exist yet
 if "history_log" not in st.session_state:
-
-# --- INJECT NATIVE APP LOOK & FEEL ---
-st.markdown("""
-    <style>
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        header {visibility: hidden;}
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            max-width: 800px;
-        }
-        div[data-testid="stSidebar"] {
-            background-color: #1E222B;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# Initialize a persistent background log for storing calculations if it doesn't exist yet
-if "history_log" not in st.session_state:
-...
-
-# Initialize a persistent background log for storing calculations if it doesn't exist yet
-if "history_log" not in st.session_state:
     st.session_state.history_log = []
 
 # Sidebar Design with ATS Theme
@@ -65,18 +41,16 @@ operation_type = st.sidebar.radio(
     ["🧮 ATS Arithmetic Lab", "📐 ATS Algebraic Solver", "📈 ATS Calculus Suite", "📊 ATS Matrix Studio", "🔮 ATS Vector Grapher"]
 )
 
-# --- NEW FEATURE: HISTORICAL LOG PANEL ---
+# --- HISTORICAL LOG PANEL ---
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ⏳ Session Activity Log")
 
 if len(st.session_state.history_log) == 0:
     st.sidebar.caption("No calculations recorded yet.")
 else:
-    # Display the last 7 calculations in reverse order so the newest shows up first
     for item in reversed(st.session_state.history_log[-7:]):
         st.sidebar.info(f"**{item['module']}**\n\nIn: `{item['input']}`\n\nOut: `{item['output']}`")
     
-    # Add a clean reset switch
     if st.sidebar.button("Clear Log History", use_container_width=True):
         st.session_state.history_log = []
         st.rerun()
@@ -115,7 +89,6 @@ if operation_type == "🧮 ATS Arithmetic Lab":
             exact_val = str(expr)
             approx_val = f"{float(expr.evalf()):.4f}"
             
-            # Log to internal history memory layout
             st.session_state.history_log.append({
                 "module": "Arithmetic",
                 "input": expr_str,
@@ -146,7 +119,6 @@ elif operation_type == "📐 ATS Algebraic Solver":
             equation = sp.Eq(sp.sympify(processed_input.split('=')[0]), sp.sympify(processed_input.split('=')[1])) if '=' in processed_input else sp.sympify(processed_input)
             solutions = sp.solve(equation, x)
             
-            # Log calculation data context
             st.session_state.history_log.append({
                 "module": "Algebra",
                 "input": eq_str,
@@ -209,7 +181,7 @@ elif operation_type == "📊 ATS Matrix Studio":
     st.subheader("ATS Matrix Laboratory")
     
     with st.container(border=True):
-        matrix_str = st.text_area("Matrix Element Allocation:", "1 2\n3 4")
+        matrix_str = st.text_area("Matrix Element Allocation (Spaces separate columns, rows split via newlines):", "1 2\n3 4")
         matrix_op = st.selectbox("Linear Algebra Calculations Available:", ["Determinant", "Inverse Matrix", "Matrix Transposition"])
         submit = st.button("Compute Linear Algebraic State", use_container_width=True, type="primary")
         
