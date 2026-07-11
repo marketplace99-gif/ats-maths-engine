@@ -10,12 +10,19 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- INJECT NATIVE APP LOOK & FEEL ---
+# --- INJECT NATIVE APP LOOK & FEEL (Fixed Sidebar Navigation) ---
 st.markdown("""
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        header {visibility: hidden;}
+        
+        /* This keeps the sidebar menu visible and usable */
+        div[data-testid="stSidebarCollapsedControl"] {
+            visibility: visible;
+            left: 10px;
+            top: 10px;
+        }
+        
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
