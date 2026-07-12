@@ -33,16 +33,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- NEW: GATEWAY AUTHENTICATION CHECK ---
-# Check if the user is currently logged in via Streamlit's auth system
-if not st.experimental_user.is_logged_in:
+# --- FIXED: SECURE GATEWAY CHECK USING MODERN SYNTAX ---
+if not st.user.is_logged_in:
     st.title("🔒 ATS Secure Gateway")
     st.markdown("---")
     st.info("Welcome to the ATS Enterprise Suite. Please authenticate to access the Math Engine Pro workspace.")
     
-    # Renders secure login buttons (Google, GitHub, etc., based on your config)
     st.login()
-    st.stop()  # Strictly stops the rest of the script from running until they pass authentication
+    st.stop()  # Prevents unauthorized access to the application data below
 
 # --- EVERYTHING BELOW RUNS ONLY IF LOGGED IN ---
 
@@ -52,7 +50,8 @@ if "history_log" not in st.session_state:
 
 # Sidebar Design with ATS Theme
 st.sidebar.markdown("# 🚀 ATS Math Engine")
-st.sidebar.markdown(f"### *Logged in as: {st.experimental_user.email}*") # Shows the user's email
+# Displays user email safely using the upgraded stable framework
+st.sidebar.markdown(f"### *Logged in as: {st.user.email}*") 
 st.sidebar.markdown("---")
 
 operation_type = st.sidebar.radio(
