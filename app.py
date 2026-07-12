@@ -33,33 +33,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- SECURE GATEWAY CHECK (VERSION BULLETPROOFED) ---
-is_authenticated = False
-try:
-    # Try the standard modern user context check
-    if st.user and getattr(st.user, "email", None):
-        is_authenticated = True
-except Exception:
-    pass
-
-if not is_authenticated:
-    st.title("🔒 ATS Secure Gateway")
-    st.markdown("---")
-    st.info("Welcome to the ATS Enterprise Suite. Please authenticate to access the Math Engine Pro workspace.")
-    
-    st.login()
-    st.stop()  # Safely halts execution for non-logged-in users
-
-# --- EVERYTHING BELOW RUNS ONLY IF LOGGED IN ---
-
 # Initialize a persistent background log for storing calculations if it doesn't exist yet
 if "history_log" not in st.session_state:
     st.session_state.history_log = []
 
 # Sidebar Design with ATS Theme
-st.sidebar.markdown("# 🚀 ATS Math Engine")
-user_email = getattr(st.user, "email", "Authorized User")
-st.sidebar.markdown(f"### *Logged in as: {user_email}*") 
+st.sidebar.markdown("#  ATS Math Engine")
 st.sidebar.markdown("---")
 
 operation_type = st.sidebar.radio(
@@ -81,11 +60,6 @@ else:
         st.session_state.history_log = []
         st.rerun()
 
-# Dynamic Logout Control
-st.sidebar.markdown("---")
-if st.sidebar.button("🔒 Secure Logout", use_container_width=True, type="secondary"):
-    st.logout()
-
 st.sidebar.markdown("---")
 st.sidebar.caption("ATS System Module v3.0")
 
@@ -102,7 +76,7 @@ def clean_math_input(user_input: str) -> str:
     return cleaned
 
 # Main Header Banner
-st.title("🚀 ATS Math Engine Pro")
+st.title(" ATS Math Engine Pro")
 st.markdown("---")
 
 # --- 1. ARITHMETIC LAB ---
@@ -197,7 +171,11 @@ elif operation_type == "📈 ATS Calculus Suite":
                 expr = sp.sympify(clean_math_input(calc_expr))
                 result = sp.integrate(expr, x)
                 
-                st.session_state.history_log.caption(f"∫ ({calc_expr}) dx")
+                st.session_state.history_log.append({
+                    "module": "Integral",
+                    "input": f"∫ ({calc_expr}) dx",
+                    "output": str(result)
+                })
                 
                 with st.container(border=True):
                     st.latex(r"\int \left(" + sp.latex(expr) + r"\right) dx = " + sp.latex(result) + r" + C")
