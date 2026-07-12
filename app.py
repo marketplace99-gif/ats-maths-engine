@@ -10,13 +10,12 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- INJECT NATIVE APP LOOK & FEEL (Fixed Sidebar Navigation) ---
+# --- INJECT NATIVE APP LOOK & FEEL ---
 st.markdown("""
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         
-        /* This keeps the sidebar menu visible and usable */
         div[data-testid="stSidebarCollapsedControl"] {
             visibility: visible;
             left: 10px;
@@ -34,13 +33,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# --- NEW: GATEWAY AUTHENTICATION CHECK ---
+# Check if the user is currently logged in via Streamlit's auth system
+if not st.experimental_user.is_logged_in:
+    st.title("🔒 ATS Secure Gateway")
+    st.markdown("---")
+    st.info("Welcome to the ATS Enterprise Suite. Please authenticate to access the Math Engine Pro workspace.")
+    
+    # Renders secure login buttons (Google, GitHub, etc., based on your config)
+    st.login()
+    st.stop()  # Strictly stops the rest of the script from running until they pass authentication
+
+# --- EVERYTHING BELOW RUNS ONLY IF LOGGED IN ---
+
 # Initialize a persistent background log for storing calculations if it doesn't exist yet
 if "history_log" not in st.session_state:
     st.session_state.history_log = []
 
 # Sidebar Design with ATS Theme
 st.sidebar.markdown("# 🚀 ATS Math Engine")
-st.sidebar.markdown("### *Professional Edition*")
+st.sidebar.markdown(f"### *Logged in as: {st.experimental_user.email}*") # Shows the user's email
 st.sidebar.markdown("---")
 
 operation_type = st.sidebar.radio(
@@ -62,8 +74,13 @@ else:
         st.session_state.history_log = []
         st.rerun()
 
+# Dynamic Logout Control
 st.sidebar.markdown("---")
-st.sidebar.caption("ATS System Module v2.6")
+if st.sidebar.button("🔒 Secure Logout", use_container_width=True, type="secondary"):
+    st.logout()
+
+st.sidebar.markdown("---")
+st.sidebar.caption("ATS System Module v3.0")
 
 # Universal Variables
 x, y, z = sp.symbols('x y z')
@@ -188,7 +205,7 @@ elif operation_type == "📊 ATS Matrix Studio":
     st.subheader("ATS Matrix Laboratory")
     
     with st.container(border=True):
-        matrix_str = st.text_area("Matrix Element Allocation (Spaces separate columns, rows split via newlines):", "1 2\n3 4")
+        matrix_str = st.text_area("Matrix Element Allocation:", "1 2\n3 4")
         matrix_op = st.selectbox("Linear Algebra Calculations Available:", ["Determinant", "Inverse Matrix", "Matrix Transposition"])
         submit = st.button("Compute Linear Algebraic State", use_container_width=True, type="primary")
         
