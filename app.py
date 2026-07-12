@@ -33,14 +33,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FIXED: SECURE GATEWAY CHECK USING MODERN SYNTAX ---
-if not st.user.is_logged_in:
+# --- SECURE GATEWAY CHECK (VERSION BULLETPROOFED) ---
+is_authenticated = False
+try:
+    # Try the standard modern user context check
+    if st.user and getattr(st.user, "email", None):
+        is_authenticated = True
+except Exception:
+    pass
+
+if not is_authenticated:
     st.title("🔒 ATS Secure Gateway")
     st.markdown("---")
     st.info("Welcome to the ATS Enterprise Suite. Please authenticate to access the Math Engine Pro workspace.")
     
     st.login()
-    st.stop()  # Prevents unauthorized access to the application data below
+    st.stop()  # Safely halts execution for non-logged-in users
 
 # --- EVERYTHING BELOW RUNS ONLY IF LOGGED IN ---
 
@@ -50,8 +58,8 @@ if "history_log" not in st.session_state:
 
 # Sidebar Design with ATS Theme
 st.sidebar.markdown("# 🚀 ATS Math Engine")
-# Displays user email safely using the upgraded stable framework
-st.sidebar.markdown(f"### *Logged in as: {st.user.email}*") 
+user_email = getattr(st.user, "email", "Authorized User")
+st.sidebar.markdown(f"### *Logged in as: {user_email}*") 
 st.sidebar.markdown("---")
 
 operation_type = st.sidebar.radio(
@@ -189,11 +197,7 @@ elif operation_type == "📈 ATS Calculus Suite":
                 expr = sp.sympify(clean_math_input(calc_expr))
                 result = sp.integrate(expr, x)
                 
-                st.session_state.history_log.append({
-                    "module": "Integral",
-                    "input": f"∫ ({calc_expr}) dx",
-                    "output": str(result)
-                })
+                st.session_state.history_log.caption(f"∫ ({calc_expr}) dx")
                 
                 with st.container(border=True):
                     st.latex(r"\int \left(" + sp.latex(expr) + r"\right) dx = " + sp.latex(result) + r" + C")
